@@ -1,9 +1,8 @@
-﻿using CheckoutKata;
-using CheckoutKata.Business;
+﻿using CheckoutKata.Business;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CheckOutKata
+namespace CheckoutKata.Domain
 {
     /// <summary>
     /// 

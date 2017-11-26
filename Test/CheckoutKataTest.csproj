@@ -62,12 +62,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lib\CheckoutKata.csproj">
-      <Project>{85ec7ac6-101a-4ac3-b41a-02519265c305}</Project>
+    <ProjectReference Include="..\Src\CheckoutKata.csproj">
+      <Project>{85EC7AC6-101A-4AC3-B41A-02519265C305}</Project>
       <Name>CheckoutKata</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

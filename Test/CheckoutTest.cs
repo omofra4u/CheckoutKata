@@ -1,6 +1,5 @@
-﻿using CheckoutKata;
-using CheckoutKata.Business;
-using CheckOutKata;
+﻿using CheckoutKata.Business;
+using CheckoutKata.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
