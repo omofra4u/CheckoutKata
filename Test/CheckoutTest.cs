@@ -2,11 +2,8 @@
 using CheckoutKata.Business;
 using CheckOutKata;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckoutKataTest
 {
@@ -23,8 +20,8 @@ namespace CheckoutKataTest
         public void TestScanItemsAreTract( )
         {
             // Arrange
-            var initialPrice = new NormalPrice( 50 );
-            var repo = ProductFactory.CreateProduct( 3, "A", initialPrice );
+            var initialPrice = 50;
+            var repo = TestAssistant.StockKeepingUnits( 3, "A", initialPrice );
 
             var checkOut = new Checkout( repo, null );
 
@@ -35,15 +32,15 @@ namespace CheckoutKataTest
             }
 
             //Assert
-            Assert.IsTrue( repo.Count() == checkOut.NumberOfScanItems );
+            Assert.IsTrue( repo.Count( ) == checkOut.NumberOfScanItems );
 
             // Arrange  
-            repo = ProductFactory.CreateProduct( 15, "C", initialPrice );
+            repo = TestAssistant.StockKeepingUnits( 15, "C", initialPrice );
             checkOut = new Checkout( repo, null );
-            var itemsToscan = repo.Take( 5 ).ToList();
+            var itemsToscan = repo.Take( 5 ).ToList( );
 
             // Act
-            itemsToscan.ForEach( x => checkOut.Scan(x.Name));
+            itemsToscan.ForEach( x => checkOut.Scan( x.Name ) );
 
             //Assert
             Assert.IsTrue( 5 == checkOut.NumberOfScanItems );
@@ -53,12 +50,11 @@ namespace CheckoutKataTest
         /// Test that all tract items are cleared when the the total price is called.
         /// </summary>
         [TestMethod]
-        public void TestScanItemsArelearedWhenGetTotalPriceIsCalled( )
+        public void TestScannedItemsAreClearedWhenGetTotalPriceIsCalled( )
         {
             // Arrange
-            var initialPrice = new NormalPrice( 30 );
-            var repo = ProductFactory.CreateProduct( 15, "A", initialPrice );
-            var checkOut = new Checkout( repo, new DiscountApplicator() );
+            var repo = TestAssistant.StockKeepingUnits( 15, "A", 30 );
+            var checkOut = new Checkout( repo, new DiscountApplicator( null ) );
 
             var itemsToscan = repo.Take( 3 ).ToList( ); // Lets scan 3 items first
 
@@ -78,18 +74,18 @@ namespace CheckoutKataTest
         [TestMethod]
         public void TestGetTotalPriceReturnsZeroIfNoItemScan( )
         {
-            var producInvent = ProductFactory.CreateProduct( 5, "C", new PromotionalPricing( 30 ) );
+            var producInvent = TestAssistant.StockKeepingUnits( 5, "C", 30 );
             var checkOut = new Checkout( producInvent, null );
             var expected = 0;
 
-            var actual = checkOut.GetTotalPrice();
+            var actual = checkOut.GetTotalPrice( );
 
             Assert.AreEqual( expected, actual );
 
             // Now scan an item that is not in the invetory
             checkOut.Scan( "B" );
 
-            actual = checkOut.GetTotalPrice();
+            actual = checkOut.GetTotalPrice( );
 
             Assert.AreEqual( expected, actual );
 
@@ -101,8 +97,8 @@ namespace CheckoutKataTest
         [TestMethod]
         public void TestGetTotalPriceReturnsTotalPriceOfAllScanItems( )
         {
-            var producInvent = ProductFactory.CreateProduct( 5, "C", new PromotionalPricing( 30 ) );
-            var checkOut = new Checkout( producInvent, new DiscountApplicator( ) );
+            var producInvent = TestAssistant.StockKeepingUnits( 5, "C", 30 );
+            var checkOut = new Checkout( producInvent, new DiscountApplicator( null ) );
             var expected = 150;
 
             foreach ( var item in producInvent )
@@ -115,13 +111,18 @@ namespace CheckoutKataTest
         }
 
         /// <summary>
-        /// Test that the total price of all items are returned, if products are scanned and the get total price is called 
+        /// Test that discount is applied for products which are on promo and they meet the promo rules
         /// </summary>
         [TestMethod]
         public void TestGetTotalPriceAppliedDiscountToScannedProducts( )
         {
-            var producInvent = ProductFactory.CreateProduct( 2, "C", new PromotionalPricing( 30 ) );
-            var checkOut = new Checkout( producInvent, new DiscountApplicator( ) );
+            var rules = TestAssistant.CreateRulesFromTexFile( );
+            var producInvent = TestAssistant.StockKeepingUnits( 2, "C", 30 ).ToList( );
+
+            // Apply discount rule to the product
+            ApplyDiscountToProducts( producInvent, rules[ 1 ] );
+            
+            var checkOut = new Checkout( producInvent, new DiscountApplicator( rules ) );
             var expected = 45;
 
             foreach ( var item in producInvent )
@@ -131,6 +132,65 @@ namespace CheckoutKataTest
             var actual = checkOut.GetTotalPrice( );
 
             Assert.AreEqual( expected, actual );
+
+            // Repeat test again
+            producInvent = TestAssistant.StockKeepingUnits( 8, "A", 50 ).ToList( );
+            // Apply discount rule to the product
+            ApplyDiscountToProducts( producInvent, rules[ 0 ] );
+
+            checkOut = new Checkout( producInvent, new DiscountApplicator( rules ) );
+            expected = 360;
+
+            foreach ( var item in producInvent )
+            {
+                checkOut.Scan( item.Name );
+            }
+            actual = checkOut.GetTotalPrice( );
+
+            Assert.AreEqual( expected, actual );
+        }
+
+        /// <summary>
+        /// Test that discount are applied to product irrespective of how they were scanned
+        /// </summary>
+        [TestMethod]
+        public void TestGetTotalPriceAppliedDiscountIrrespectiveOfScannedOrder( )
+        {
+            var rules = TestAssistant.CreateRulesFromTexFile( );
+            var SKUAs = TestAssistant.StockKeepingUnits( 4, "A", 50 ).ToList( );
+            var SKUBs = TestAssistant.StockKeepingUnits( 5, "B", 30 ).ToList( );
+            var SKUCs = TestAssistant.StockKeepingUnits( 1, "C", 20 ).ToList( );
+            var SKUDs = TestAssistant.StockKeepingUnits( 2, "D", 15 ).ToList( );
+
+            // Apply discount rule to the product
+            ApplyDiscountToProducts( SKUAs, rules[ 0 ] );
+            ApplyDiscountToProducts( SKUBs, rules[ 1 ] );
+
+            var productInvent = SKUAs.Concat( SKUBs ).Concat( SKUCs ).Concat( SKUDs );
+
+            var checkOut = new Checkout( productInvent, new DiscountApplicator( rules ) );
+            var expected = 350;
+
+            List<StockKeepingUnit> shuffledList = new List<StockKeepingUnit>( productInvent );
+            TestAssistant.ShuffleStockKeepingUnitList( ref shuffledList );
+
+            foreach ( var item in shuffledList )
+            {
+                checkOut.Scan( item.Name );
+            }
+            var actual = checkOut.GetTotalPrice( );
+
+            Assert.AreEqual( expected, actual );
+        }
+
+        /// <summary>
+        /// Apply the given <c>ISpecialPricingRule</c> to the list of <c>StockKeepingUnit</c>
+        /// </summary>
+        /// <param name="discountedProducts">The rule to apply</param>
+        /// <param name="rule">The list on which to apply the rule</param>
+        private void ApplyDiscountToProducts( List<StockKeepingUnit> discountedProducts, ISpecialPricingRule rule )
+        {
+            discountedProducts.ForEach( x => x.AppyPromotionRule( rule ) );
         }
     }
 }

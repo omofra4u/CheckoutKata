@@ -41,17 +41,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\DiscountApplicator.cs" />
+    <Compile Include="Business\DiscountPrice\ComaSeparatedFileSpecialPricingRuleFactory.cs" />
     <Compile Include="Business\DiscountPrice\DiscountFactory.cs" />
-    <Compile Include="Business\DiscountPrice\IProtionalPricingScheme.cs" />
-    <Compile Include="Business\DiscountPrice\BuyThreeGetTwentyPoundsOffPricingScheme.cs" />
+    <Compile Include="Business\DiscountPrice\ISpecialPricingRuleFactory.cs" />
+    <Compile Include="Business\DiscountPrice\SpecialPricingRule.cs" />
+    <Compile Include="Business\ISpecialPricingRuleCalculator.cs" />
+    <Compile Include="Business\DiscountPrice\GenericCalculator.cs" />
     <Compile Include="Business\IDiscountApplicator.cs" />
+    <Compile Include="Business\DiscountPrice\ISpecialPricingRule.cs" />
     <Compile Include="Checkout.cs" />
     <Compile Include="ICheckout.cs" />
-    <Compile Include="NormalPrice.cs" />
-    <Compile Include="PricingScheme.cs" />
-    <Compile Include="Product.cs" />
-    <Compile Include="PromotionalPricing.cs" />
+    <Compile Include="StockKeepingUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\FileReader.cs" />
     <Compile Include="Util\Guard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

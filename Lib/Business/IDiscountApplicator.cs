@@ -8,6 +8,6 @@ namespace CheckoutKata.Business
 {
     public interface IDiscountApplicator
     {
-        int ApplyDicountForCheckoutItems( List<Product> scannedProducts );
+        int ApplyDicountForCheckoutItems( List<StockKeepingUnit> scannedProducts );
     }
 }
