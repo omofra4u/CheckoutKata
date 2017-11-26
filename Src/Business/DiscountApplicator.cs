@@ -1,9 +1,7 @@
 ﻿using CheckoutKata.Business.DiscountPrice;
-using System;
+using CheckoutKata.Domain;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckoutKata.Business
 {

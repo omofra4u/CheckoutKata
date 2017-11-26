@@ -49,9 +49,9 @@
     <Compile Include="Business\DiscountPrice\GenericCalculator.cs" />
     <Compile Include="Business\IDiscountApplicator.cs" />
     <Compile Include="Business\DiscountPrice\ISpecialPricingRule.cs" />
-    <Compile Include="Checkout.cs" />
-    <Compile Include="ICheckout.cs" />
-    <Compile Include="StockKeepingUnit.cs" />
+    <Compile Include="Domain\Checkout.cs" />
+    <Compile Include="Domain\ICheckout.cs" />
+    <Compile Include="Domain\StockKeepingUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\FileReader.cs" />
     <Compile Include="Util\Guard.cs" />

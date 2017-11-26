@@ -1,4 +1,4 @@
-﻿namespace CheckOutKata
+﻿namespace CheckoutKata.Domain
 {
     /// <summary>
     /// 
